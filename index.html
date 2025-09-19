@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MatrixCalc Retro Merah-Biru</title>
+<style>
+body {
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    background: #94090999; /* biru muda retro */
+    color: #7a0c2e; /* merah tua */
+    margin: 0;
+    padding: 80px 20px;
+}
+h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #ff3b3f; /* merah cerah */
+    text-shadow: 2px 2px #1a3b7c; /* shadow biru tua */
+}
+p {
+    font-size: 22px;
+    margin-bottom: 50px;
+}
+a.button {
+    display: inline-block;
+    padding: 18px 40px;
+    margin: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 12px;
+    background: #1a3b7c; /* biru retro */
+    color: #ff3b3f; /* merah cerah */
+    text-decoration: none;
+    box-shadow: 3px 3px 0 #7a0c2e; /* shadow merah tua */
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+a.button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+a.button:hover::after {
+    left: 0;
+}
+a.button:hover {
+    background: #ff3b3f;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 5px 5px 0 #1a3b7c;
+}
+</style>
+</head>
+<body>
+
+<h1>MatrixCalc</h1>
+<p>Kalkulator Matriks Modern — Pilih Metode</p>
+
+<a href="b.html" class="button"><b>sistem obe </b></a>
+<a href="d.html" class="button"><b>sistem biasa</b> </a>
+</body>
+<a href="inkal.html" class="button"><b>hitung</b> </a>
+</html>

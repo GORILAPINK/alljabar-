@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Invers Matriks Retro</title>
+<style>
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(to right, #0b0c2a, #1a1a5e);
+    color: #ff4d4d;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1 {
+    text-align: center;
+    color: #ff4d4d;
+    text-shadow: 2px 2px #000;
+}
+section {
+    display: none;
+    width: 100%;
+    max-width: 800px;
+    background: #10104a;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+    margin-top: 15px;
+    border: 2px solid #ff4d4d;
+}
+.active { display: block; }
+.description {
+    background: #121256;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    border: 1px solid #ff4d4d;
+}
+.description strong { color: #fff; }
+select, button {
+    padding: 10px 16px;
+    margin: 5px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 2px solid #ff4d4d;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    transition: 0.2s;
+    background: #10104a;
+    color: #ff4d4d;
+}
+button:hover { background: #ff4d4d; color: #10104a; }
+#matrixContainer { margin-top: 15px; overflow-x: auto; }
+table { border-collapse: collapse; margin: 0 auto; }
+td { border: 2px solid #ff4d4d; padding: 8px; text-align: center; }
+input {
+    width: 60px; text-align: center;
+    padding: 6px; border-radius: 3px;
+    border: 1px solid #ff4d4d;
+    background: #10104a; color: #ff4d4d;
+    font-weight: bold; font-family: monospace;
+}
+.step-title { color: #ffd700; margin-top: 15px; font-weight: bold; text-shadow: 1px 1px #000; }
+.step-desc { font-size: 0.9rem; color: #ffaaaa; margin-bottom: 10px; }
+#steps { max-height: 400px; overflow-y: auto; margin-top: 15px; }
+.nav-buttons { display: flex; justify-content: space-between; margin-top: 15px; }
+@media screen and (max-width: 480px){
+    input { width: 40px; padding: 4px; }
+    select, button { font-size: 0.9rem; padding: 6px 10px; }
+    td { padding: 4px; }
+}
+</style>
+</head>
+<body>
+
+<h1>Kalkulator Invers Matriks Retro</h1>
+
+<!-- Section 1: Penjelasan & Input Matriks -->
+<section id="section1" class="active">
+    <div class="description">
+        <strong>Apa itu Invers Matriks?</strong><br>
+        Matriks invers A⁻¹ adalah matriks yang jika dikalikan dengan A akan menghasilkan matriks identitas I.<br><br>
+
+        <strong>Cara Menggunakan Kalkulator:</strong>
+        <ol>
+            <li>Pilih ordo matriks (2x2 sampai 6x6).</li>
+            <li>Klik "Generate Matriks" untuk membuat kotak input.</li>
+            <li>Masukkan angka matriks atau klik "Masukkan Soal Contoh".</li>
+            <li>Klik "Selanjutnya" untuk melihat hasil invers dan langkah-langkah OBE.</li>
+        </ol>
+
+        <strong>Cara Menghitung Invers:</strong>
+        <ol>
+            <li>Buat matriks augmented [A|I].</li>
+            <li>Lakukan OBE untuk ubah A menjadi identitas.</li>
+            <li>Langkah OBE: swap baris, bagi pivot, eliminasi kolom.</li>
+            <li>Sisi kanan augmented menjadi A⁻¹ setelah A = identitas.</li>
+        </ol>
+    </div>
+
+    <div>
+        <label>Pilih Ordo Matriks:</label>
+        <select id="orderSelect" onchange="updateOrdo()">
+            <option value="2">2 x 2</option>
+            <option value="3">3 x 3</option>
+            <option value="4">4 x 4</option>
+            <option value="5">5 x 5</option>
+            <option value="6">6 x 6</option>
+        </select>
+    </div>
+    <div>
+        <button onclick="buatMatriks()">Generate Matriks</button>
+        <button onclick="masukkanSoal()">Masukkan Soal Contoh</button>
+    </div>
+    <div id="matrixContainer"></div>
+
+    <div class="nav-buttons">
+        <div></div>
+        <button onclick="nextSection()">Selanjutnya &raquo;</button>
+    </div>
+</section>
+
+<!-- Section 2: Hasil & Langkah OBE -->
+<section id="section2">
+    <button onclick="hitungInvers()">Hitung Invers</button>
+    <div id="steps"></div>
+    <div class="nav-buttons">
+        <button onclick="prevSection()">&laquo; Kembali</button>
+        <div></div>
+    </div>
+</section>
+
+<script>
+let N = 2;
+function updateOrdo(){ N = parseInt(document.getElementById('orderSelect').value); }
+function buatMatriks(){
+    let container=document.getElementById('matrixContainer'); container.innerHTML='';
+    let table=document.createElement('table');
+    for(let i=0;i<N;i++){ let tr=document.createElement('tr');
+        for(let j=0;j<N;j++){ let td=document.createElement('td'); let input=document.createElement('input'); input.type='number'; input.id=`cell-${i}-${j}`; td.appendChild(input); tr.appendChild(td); }
+        table.appendChild(tr);
+    }
+    container.appendChild(table);
+    document.getElementById('steps').innerHTML='';
+}
+function masukkanSoal(){
+    let soal={2:[[2,1],[3,2]],3:[[1,2,3],[0,1,4],[5,6,0]],4:[[1,2,3,4],[5,6,7,8],[2,6,4,8],[3,1,1,2]]};
+    if(!soal[N]){ alert("Belum ada contoh soal untuk ordo ini"); return; }
+    buatMatriks();
+    for(let i=0;i<N;i++){ for(let j=0;j<N;j++){ document.getElementById(`cell-${i}-${j}`).value=soal[N][i][j]; } }
+}
+function tampilMatriks(mat){ let html='<table>'; for(let i=0;i<mat.length;i++){ html+='<tr>'; for(let j=0;j<mat[i].length;j++){ html+=`<td>${mat[i][j].toFixed(2)}</td>`; } html+='</tr>'; } html+='</table>'; return html; }
+function hitungInvers(){
+    let A=[]; for(let i=0;i<N;i++){ let row=[]; for(let j=0;j<N;j++){ let val=parseFloat(document.getElementById(`cell-${i}-${j}`).value); if(isNaN(val)) val=0; row.push(val); } A.push(row); }
+    let augmented=A.map((row,i)=>[...row,...Array.from({length:N},(_,j)=>i===j?1:0)]);
+    let stepsHTML=`<div class="step-title">Matriks Awal [A|I]:</div>`+tampilMatriks(augmented)+`<div class="step-desc">Matriks input digabung dengan matriks identitas untuk memulai proses eliminasi baris.</div>`;
+    for(let i=0;i<N;i++){
+        if(augmented[i][i]===0){
+            let swapped=false; for(let k=i+1;k<N;k++){ if(augmented[k][i]!==0){ [augmented[i],augmented[k]]=[augmented[k],augmented[i]]; stepsHTML+=`<div class="step-title">Swap baris ${i+1} dan ${k+1}</div>`+tampilMatriks(augmented)+`<div class="step-desc">Baris ${i+1} dipindahkan dengan baris ${k+1} karena pivot = 0</div>`; swapped=true; break; } } if(!swapped){ document.getElementById('steps').innerHTML="⚠ Matriks tidak memiliki invers (singular)"; return; }
+        }
+        let pivot=augmented[i][i]; for(let j=0;j<2*N;j++) augmented[i][j]/=pivot;
+        stepsHTML+=`<div class="step-title">Pivot baris ${i+1} = 1</div>`+tampilMatriks(augmented)+`<div class="step-desc">Baris ${i+1} dibagi pivot (${pivot.toFixed(2)}) agar pivot menjadi 1</div>`;
+        for(let k=0;k<N;k++){ if(k!==i){ let factor=augmented[k][i]; for(let j=0;j<2*N;j++){ augmented[k][j]-=factor*augmented[i][j]; } stepsHTML+=`<div class="step-title">Hapus elemen kolom ${i+1} baris ${k+1}</div>`+tampilMatriks(augmented)+`<div class="step-desc">Baris ${k+1} dikurangi ${factor.toFixed(2)} * baris ${i+1}</div>`; } }
+    }
+    let Ainv=augmented.map(row=>row.slice(N,2*N));
+    stepsHTML+=`<div class="step-title">Hasil Invers Matriks:</div>`+tampilMatriks(Ainv)+`<div class="step-desc">Ini adalah matriks invers dari matriks yang Anda masukkan.</div>`;
+    document.getElementById('steps').innerHTML=stepsHTML;
+}
+function nextSection(){ document.getElementById('section1').classList.remove('active'); document.getElementById('section2').classList.add('active'); }
+function prevSection(){ document.getElementById('section2').classList.remove('active'); document.getElementById('section1').classList.add('active'); }
+</script>
+
+</body>
+</html>
